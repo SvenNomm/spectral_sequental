@@ -1,35 +1,28 @@
-import pandas as pd
 
-from preprocessing_module import initial_formatting_gen_2  # use this line for the third generation of the  data set
-from model_building_and_training_module import lstm_wrapper_gen_2
-from preprocessing_module import delete_nan_rows
-from preprocessing_module import splitting_wrapper
-from validation_module import test_model
 import tensorflow as tf
-from tensorflow import keras
-
-path = '/Users/svennomm/kohalikTree/Data/AIRSCS/wave/data_v2/katse_01/'  # this is for the large data set provided end 2021-jan2022
-
-unique_id = '_hgh_order_1_winx_256_'
-polarisation = 'co_'
-initial_data_file = path + 'sarspec'+ unique_id + polarisation +'clean.csv' # this and the following row are for the data xx.12.2021 - xx.01.2022
-target_data_file = path + 'wavespec' + unique_id + 'clean.csv'
+import keras
+import pandas as pd
+import os
+import datetime
+import pickle
+from validation_module import test_model
 
 
-initial_data = pd.read_csv(initial_data_file, sep=',') # keep in mind which separator to use
-target_data = pd.read_csv(target_data_file, sep=',')
+katse_nr = 1
+order = 1
+path = '/Users/svennomm/kohalikTree/Data/AIRSCS/wave/data_v2/'
 
-initial_data, target_data = delete_nan_rows(initial_data, target_data)
-
-initial_data, target_data = initial_formatting_gen_2(initial_data, target_data)
-#initial_data = down_sample(initial_data, target_data)
-model_path = '/Users/svennomm/kohalikTree/Data/AIRSCS/wave/data_v2/models/'
-model_name = 'lstm_hgh_order_1_winx_256_co_04_26_2022_23_18_01'
-
-data_name = unique_id + polarisation
+model_path = path + 'models/'
+model_name = 'lstm_katse_01_02_10000_epoch_05_03_2022_21_04_50'
 
 lstm_model = tf.keras.models.load_model(model_path + model_name)
-initial_data_train, initial_data_valid, target_data_train, target_data_valid, valid_index = splitting_wrapper(initial_data, target_data)
+
+data_name = 'katse_1_2_testing_data_05_03_2022_23_06_55'
+data_file_name = path + 'processed_datasets/' + data_name + '.pkl'
+
+with open(data_file_name, 'rb') as f:
+    initial_data_valid, target_data_valid, valid_index = pickle.load(f)
+
 test_model(initial_data_valid, target_data_valid, lstm_model, valid_index, model_path, data_name, model_name)
 
 print("That's all folks!!!")

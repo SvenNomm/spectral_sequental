@@ -5,6 +5,7 @@ import numpy as np
 from sklearn.metrics import mean_squared_error
 import pandas as pd
 
+
 def goodness_descriptor(test_y, hat_y):
     mse = mean_squared_error(test_y, hat_y)
     rho = np.corrcoef(test_y, hat_y)[0, 1]
@@ -18,7 +19,7 @@ def goodness_descriptor(test_y, hat_y):
 
 def test_model(test_x, test_y, model, test_index, path, data_name, model_name):
     print("Testing LSTM model!")
-    test_x = apply_log(test_x)
+    #test_x = apply_log(test_x)
     #test_y = apply_log(test_y)
     test_x = test_x.to_numpy()
     test_y = test_y.to_numpy()
@@ -33,7 +34,7 @@ def test_model(test_x, test_y, model, test_index, path, data_name, model_name):
         #x_hat = test_x[i, :, :]
         #x_hat = x_hat[None, :]
         #y_hat = model.predict(test_x[i, :, :])
-        mse, rho, max_test, max_hat, delta_max_val, delta_max_loc = goodness_descriptor(test_y[i, :], np.exp(y_hat[i, :]))
+        mse, rho, max_test, max_hat, delta_max_val, delta_max_loc = goodness_descriptor(test_y[i, :], y_hat[i, :])
         goodness_descriptors.append([int(test_index[i]), mse, rho, max_test, max_hat, delta_max_val, delta_max_loc])
 
         #print("Testing for datapoint", test_index.loc[i])

@@ -24,6 +24,25 @@ def initial_formatting_gen_2(initial_data, target_data):
     return initial_data, target_data
 
 
+def initial_formatting_gen_2_3(initial_data_1, initial_data_2, target_data):
+    print("Aloha! Performing initial formatting")
+
+    # the following lines are very local
+    del initial_data_1['time']
+    del initial_data_2['time']
+    del target_data['time']
+    del initial_data_1['station_ind']
+    del initial_data_2['station_ind']
+    del target_data['station_ind']
+
+    #target_data.drop(target_data.index[0], inplace=True)
+    #target_data = target_data.reset_index()
+    #del target_data['index']
+
+    print("Initial  formatting has been completed!")
+    return initial_data_1,initial_data_2, target_data
+
+
 def delete_nan_rows(df1, df2):
     selected_rows = df1.loc[df1.isna().any(axis=1)].index.tolist()
     df1 = df1.drop(df1.index[selected_rows])
@@ -88,3 +107,19 @@ def apply_normalization(data):
             data[i,j] = ( data[i,j] - col_min) / col_ampl
     print("Data has been normalized!")
     return data
+
+
+def element_wise_lin_div(data_1, data_2):
+    columns = data_1.columns
+
+    data_1_t = tf.convert_to_tensor(data_1)
+    data_2_t = tf.convert_to_tensor(data_2)
+    data_t = tf.divide(data_1_t,data_2_t)
+    data_t = data_t.numpy()
+    data_t = pd.DataFrame(data_t, columns=columns)
+
+    return data_t
+
+
+
+
