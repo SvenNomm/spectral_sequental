@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import tensorflow as tf
 #import tensorflow_datasets as tfds
+from tslearn.clustering import TimeSeriesKMeans
+
 
 from scipy.signal import resample
 from sklearn.model_selection import train_test_split
@@ -50,6 +52,18 @@ def delete_nan_rows(df1, df2):
     return df1, df2
 
 
+def delete_nan_rows_3(df1, df2, df3):
+    selected_rows = df1.loc[df1.isna().any(axis=1)].index.tolist()
+    df1 = df1.drop(df1.index[selected_rows])
+    df2 = df2.drop(df2.index[selected_rows])
+    df3 = df3.drop(df3.index[selected_rows])
+
+    selected_rows_2 = df2.loc[df2.isna().any(axis=1)].index.tolist()
+    df1 = df1.drop(df1.index[selected_rows_2])
+    df2 = df2.drop(df2.index[selected_rows_2])
+    df3 = df3.drop(df3.index[selected_rows_2])
+    return df1, df2, df3
+
 def splitting_wrapper(initial_data, target_data):
     print("Hello, this is splitting wrapper!")
     _, cols = initial_data.shape
@@ -77,6 +91,7 @@ def splitting_wrapper(initial_data, target_data):
     del target_data_test['index']
     print("Splitting has been completed.")
     return initial_data_train, initial_data_test, target_data_train, target_data_test, test_index
+
 
 def apply_log(data):
     print("transfering to the log scale!")
@@ -121,5 +136,12 @@ def element_wise_lin_div(data_1, data_2):
     return data_t
 
 
+def clustering_support(initial_data, target_data):
+    km = TimeSeriesKMeans(n_clusters=2, metric="softdtw", max_iter=5, random_state=0).fit_predict(initial_data)
+    #for k in range(0,np.max(km)):
+    selected_rows = np.where(km==0)
+    initial_data = initial_data.loc[selected_rows[0]]
+    target_data = target_data.loc[selected_rows[0]]
 
+    return initial_data, target_data
 

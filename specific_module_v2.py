@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 import pickle
 import datetime
+from preprocessing_module import clustering_support
 
 
 def initial_formatting_gen_2(initial_data_1, initial_data_2, target_data):
@@ -17,6 +18,10 @@ def initial_formatting_gen_2(initial_data_1, initial_data_2, target_data):
     del initial_data_1['station_ind']
     del initial_data_2['station_ind']
     del target_data['station_ind']
+    #del initial_data_1['Unnamed: 0']
+    #del initial_data_2['Unnamed: 0']
+    #del target_data['Unnamed: 0']
+
 
     # target_data.drop(target_data.index[0], inplace=True)
     # target_data = target_data.reset_index()
@@ -125,15 +130,41 @@ def return_data_sets(path, order, winx):
     # initial_data_1, initial_data_2, target_data = delete_nan_rows(initial_data_1, initial_data_2, target_data)
     initial_data_1, initial_data_2, target_data = initial_formatting_gen_2(initial_data_1, initial_data_2, target_data)
 
+    #initial_data = initial_data_2
     initial_data = element_wise_lin_div(initial_data_1, initial_data_2)
+    #initial_data = element_wise_lin_div(initial_data_2, initial_data_1)
     initial_data, target_data = delete_nan_rows(initial_data, target_data)
 
-    # initial_data = apply_normalization(initial_data)
-    # target_data = apply_normalization(target_data)
-    initial_data = apply_log(initial_data)
-    target_data = apply_log(target_data)
+    #initial_data = apply_log(initial_data)
+    #target_data = apply_log(target_data)
+    #initial_data = apply_normalization(initial_data)
+    #target_data = apply_normalization(target_data)
 
     return initial_data, target_data
+
+
+# def return_data_sets_parallel(path, order, winx):
+#     initial_data_file_1 = path + 'sarspec_hgh_order_' + str(order) + '_winx_' + str(winx) + '_co_clean.csv'
+#     initial_data_file_2 = path + 'sarspec_hgh_order_' + str(order) + '_winx_' + str(winx) + '_cro_clean.csv'
+#     target_data_file = path + 'wavespec_hgh_order_' + str(order) + '_winx_' + str(winx) + '_clean.csv'
+#
+#     initial_data_1 = pd.read_csv(initial_data_file_1, sep=',')
+#     initial_data_2 = pd.read_csv(initial_data_file_2, sep=',')
+#     target_data = pd.read_csv(target_data_file, sep=',')
+#     # initial_data_1, initial_data_2, target_data = delete_nan_rows(initial_data_1, initial_data_2, target_data)
+#     initial_data_1, initial_data_2, target_data = initial_formatting_gen_2(initial_data_1, initial_data_2, target_data)
+#
+#     #initial_data = initial_data_2
+#     #initial_data = element_wise_lin_div(initial_data_1, initial_data_2)
+#     initial_data, target_data = delete_nan_rows(initial_data, target_data)
+
+    # initial_data = apply_log(initial_data)
+    # target_data = apply_log(target_data)
+    # initial_data = apply_normalization(initial_data)
+    # target_data = apply_normalization(target_data)
+    #
+    #
+    # return initial_data, target_data
 
 
 def combine_katsed(path, katse_nr, order):
@@ -146,6 +177,8 @@ def combine_katsed(path, katse_nr, order):
 
     initial_data = pd.concat([initial_data_1, initial_data_2], ignore_index=True)
     target_data = pd.concat([target_data_1, target_data_2], ignore_index=True)
+
+    initial_data, target_data = clustering_support(initial_data, target_data)
 
     initial_data_train, initial_data_test, target_data_train, target_data_test, test_index = splitting_wrapper(
         initial_data, target_data)
@@ -204,3 +237,89 @@ def combine_katsed_ai(path_initial_data, path_processed, katse_nr, order):
 
     return initial_data_train, initial_data_valid, initial_data_test, target_data_train, target_data_valid, \
            target_data_test, valid_index, test_index
+
+
+def combine_katsed_simple(path, katse_nr, order):
+
+    path_1 = path + "katse_0" + str(katse_nr) + "/"
+
+    initial_data, target_data = return_data_sets(path_1, order=order, winx=384)
+
+    #initial_data, target_data = clustering_support(initial_data, target_data)
+
+    initial_data_train, initial_data_test, target_data_train, target_data_test, test_index = splitting_wrapper(
+        initial_data, target_data)
+
+    start_time = datetime.datetime.now()
+    start_time.strftime("%m_%d_%Y_%H_%M_%S")
+
+    file_name = path + 'processed_datasets/katse_' + str(katse_nr) + '_testing_data_' \
+                + start_time.strftime("%m_%d_%Y_%H_%M_%S") + '.pkl'
+
+    with open(file_name, 'wb') as f:
+        pickle.dump([initial_data_test, target_data_test, test_index], f)
+
+    initial_data_train, initial_data_valid, target_data_train, target_data_valid, valid_index = splitting_wrapper(
+        initial_data_train, target_data_train)
+
+    file_name = path + 'processed_datasets/katse_' + str(katse_nr) + '_training_data_' \
+                + start_time.strftime("%m_%d_%Y_%H_%M_%S") + '.pkl'
+    with open(file_name, 'wb') as f:
+        pickle.dump([initial_data_train, initial_data_valid, target_data_train, target_data_valid, valid_index], f)
+
+    return initial_data_train, initial_data_valid, initial_data_test, target_data_train, target_data_valid, target_data_test, valid_index, test_index
+
+
+def combine_katsed_simple_2(path, katse_nr, order):
+
+    path_1 = path + "katse_0" + str(katse_nr) + "/"
+
+    initial_data, target_data = return_data_sets(path_1, order=order, winx=384)
+
+    #initial_data, target_data = clustering_support(initial_data, target_data)
+
+    initial_data_train, initial_data_test, target_data_train, target_data_test, test_index = splitting_wrapper(
+        initial_data, target_data)
+
+    start_time = datetime.datetime.now()
+    start_time.strftime("%m_%d_%Y_%H_%M_%S")
+
+    file_name = path + 'processed_datasets/katse_' + str(katse_nr) + '_testing_data_' \
+                + start_time.strftime("%m_%d_%Y_%H_%M_%S") + '.pkl'
+
+    with open(file_name, 'wb') as f:
+        pickle.dump([initial_data_test, target_data_test, test_index], f)
+
+    initial_data_train, initial_data_valid, target_data_train, target_data_valid, valid_index = splitting_wrapper(
+        initial_data_train, target_data_train)
+
+    file_name = path + 'processed_datasets/katse_' + str(katse_nr) + '_training_data_' \
+                + start_time.strftime("%m_%d_%Y_%H_%M_%S") + '.pkl'
+    with open(file_name, 'wb') as f:
+        pickle.dump([initial_data_train, initial_data_valid, target_data_train, target_data_valid, valid_index], f)
+
+    return initial_data_train, initial_data_valid, initial_data_test, target_data_train, target_data_valid, target_data_test, valid_index, test_index
+
+
+def return_data_sets_simple(path, order, winx):
+    initial_data_file_1 = path + 'katse_08/' + 'sarspec_hgh_order_' + str(order) + '_winx_' + str(winx) + '_co_clean.csv'
+    initial_data_file_2 = path + 'katse_08/' + 'sarspec_hgh_order_' + str(order) + '_winx_' + str(winx) + '_cro_clean.csv'
+    target_data_file = path + 'katse_08/' + 'wavespec_hgh_order_' + str(order) + '_winx_' + str(winx) + '_clean.csv'
+
+    initial_data_1 = pd.read_csv(initial_data_file_1, sep=',')
+    initial_data_2 = pd.read_csv(initial_data_file_2, sep=',')
+    target_data = pd.read_csv(target_data_file, sep=',')
+    # initial_data_1, initial_data_2, target_data = delete_nan_rows(initial_data_1, initial_data_2, target_data)
+    initial_data_1, initial_data_2, target_data = initial_formatting_gen_2(initial_data_1, initial_data_2, target_data)
+
+    #initial_data = initial_data_2
+    #initial_data = element_wise_lin_div(initial_data_1, initial_data_2)
+    #initial_data = element_wise_lin_div(initial_data_2, initial_data_1)
+    #initial_data, target_data = delete_nan_rows(initial_data, target_data)
+
+    #initial_data = apply_log(initial_data)
+    #target_data = apply_log(target_data)
+    #initial_data = apply_normalization(initial_data)
+    #target_data = apply_normalization(target_data)
+
+    return initial_data_1, initial_data_2
