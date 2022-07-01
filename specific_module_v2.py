@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 import pickle
 import datetime
-from preprocessing_module import clustering_support
+#from preprocessing_module import clustering_support
 
 
 def initial_formatting_gen_2(initial_data_1, initial_data_2, target_data):
@@ -178,7 +178,7 @@ def combine_katsed(path, katse_nr, order):
     initial_data = pd.concat([initial_data_1, initial_data_2], ignore_index=True)
     target_data = pd.concat([target_data_1, target_data_2], ignore_index=True)
 
-    initial_data, target_data = clustering_support(initial_data, target_data)
+    #initial_data, target_data = clustering_support(initial_data, target_data)
 
     initial_data_train, initial_data_test, target_data_train, target_data_test, test_index = splitting_wrapper(
         initial_data, target_data)

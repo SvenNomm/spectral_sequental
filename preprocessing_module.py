@@ -2,7 +2,8 @@ import pandas as pd
 import numpy as np
 import tensorflow as tf
 #import tensorflow_datasets as tfds
-from tslearn.clustering import TimeSeriesKMeans
+
+
 
 
 from scipy.signal import resample
@@ -63,6 +64,7 @@ def delete_nan_rows_3(df1, df2, df3):
     df2 = df2.drop(df2.index[selected_rows_2])
     df3 = df3.drop(df3.index[selected_rows_2])
     return df1, df2, df3
+
 
 def splitting_wrapper(initial_data, target_data):
     print("Hello, this is splitting wrapper!")
@@ -126,7 +128,6 @@ def apply_normalization(data):
 
 def element_wise_lin_div(data_1, data_2):
     columns = data_1.columns
-
     data_1_t = tf.convert_to_tensor(data_1)
     data_2_t = tf.convert_to_tensor(data_2)
     data_t = tf.divide(data_1_t,data_2_t)
@@ -134,14 +135,3 @@ def element_wise_lin_div(data_1, data_2):
     data_t = pd.DataFrame(data_t, columns=columns)
 
     return data_t
-
-
-def clustering_support(initial_data, target_data):
-    km = TimeSeriesKMeans(n_clusters=2, metric="softdtw", max_iter=5, random_state=0).fit_predict(initial_data)
-    #for k in range(0,np.max(km)):
-    selected_rows = np.where(km==0)
-    initial_data = initial_data.loc[selected_rows[0]]
-    target_data = target_data.loc[selected_rows[0]]
-
-    return initial_data, target_data
-

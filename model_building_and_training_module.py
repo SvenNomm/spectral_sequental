@@ -6,6 +6,7 @@ from tensorflow import keras
 #tf.compat.v1.disable_eager_execution()
 from tensorflow.keras import layers
 from validation_module import test_model
+from validation_module import test_model_with_output
 from keras.callbacks import EarlyStopping
 from keras import backend as K
 
@@ -211,5 +212,5 @@ def lstm_wrapper_gen_2_with_callbacks(initial_data_train, initial_data_valid, in
                                                  target_data_valid, epochs_nr, path)
     lstm_model.save(full_model_name)
 
-    test_model(initial_data_test, target_data_test, lstm_model, test_index, path, data_name, model_name)
+    test_model_with_output(initial_data_test, target_data_test, lstm_model, test_index, path, data_name, model_name)
     print("Uhhh managed the task")
