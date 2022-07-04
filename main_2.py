@@ -8,6 +8,8 @@ import tensorboard
 
 from model_building_and_training_module import lstm_wrapper_gen_2
 from model_building_and_training_module import lstm_wrapper_gen_2_with_callbacks
+from model_building_and_training_module import lstm_wrapper_gen_2_with_callbacks_output
+
 from specific_module_v2 import *
 from support_module import clustering_support
 from support_module import input_output_analysis_wrapper

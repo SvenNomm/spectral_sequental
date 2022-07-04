@@ -214,3 +214,26 @@ def lstm_wrapper_gen_2_with_callbacks(initial_data_train, initial_data_valid, in
 
     test_model_with_output(initial_data_test, target_data_test, lstm_model, test_index, path, data_name, model_name)
     print("Uhhh managed the task")
+
+
+def lstm_wrapper_gen_2_with_callbacks_output(initial_data_train, initial_data_valid, initial_data_test,
+                                             target_data_train, target_data_valid, target_data_test, valid_index,
+                                             test_index, path, data_name, epochs_nr):
+
+    print("Aloha! this is lstm_wrapper!!!")
+
+    np.set_printoptions(precision=3, suppress=True)
+    print(tf.__version__)
+
+    start_time = datetime.datetime.now()
+    model_name = 'lstm_' + data_name + '_' + str(epochs_nr) + '_epoch_' + start_time.strftime("%m_%d_%Y_%H_%M_%S")
+    full_model_name = path + model_name
+
+    lstm_model = train_model_with_with_callbacks(initial_data_train, target_data_train, initial_data_valid,
+                                                 target_data_valid, epochs_nr, path)
+    lstm_model.save(full_model_name)
+
+    test_model_with_output(initial_data_test, target_data_test, lstm_model, test_index, path, data_name, model_name)
+    print("Uhhh managed the task")
+    return lstm_model
+

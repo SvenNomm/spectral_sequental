@@ -131,7 +131,6 @@ def clustering_support(initial_data, target_data):
     kmeans = sklc.KMeans(n_clusters=number_of_clusters, random_state=0).fit(output_params[:, 2:4])
     labels_output = kmeans.labels_
 
-
     fig = plt.figure()
     plt.axis('off')
     ax1 = fig.add_subplot(2, 2, 1)
