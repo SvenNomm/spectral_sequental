@@ -1,15 +1,15 @@
-# this is the the main file for  lstm case the spectral project
+# this is the the main file for  boosted regression
 # NB case of the data with two polarisations
 
 import pandas as pd
 import os
 import datetime
 import tensorboard
+from sklearn.ensemble import GradientBoostingRegressor
 
-from model_building_and_training_module import lstm_wrapper_gen_2
-from model_building_and_training_module import lstm_wrapper_gen_2_with_callbacks
+
 from specific_module_v2 import *
-#from preprocessing_module import clustering_support
+
 
 katse_nr = 8
 order = 2
@@ -21,8 +21,11 @@ valid_index, test_index = combine_katsed_simple(path, katse_nr, order)
 model_path = path + 'models/'
 data_name = 'katse_0' + str(katse_nr) + '_0' + str(katse_nr + 1)
 
-lstm_wrapper_gen_2_with_callbacks(initial_data_train, initial_data_valid, initial_data_test, target_data_train,
-                                  target_data_valid, target_data_test, valid_index, test_index, model_path, data_name,
-                                  epochs_nr=5000)
+init_data = initial_data_train.to_numpy
+targ_data = initial
+
+
+model_gradientBoosting = GradientBoostingRegressor()
+model_gradientBoosting.fit(initial_data_train, target_data_train)
 
 print("That's all folks!!!")

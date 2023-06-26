@@ -7,6 +7,7 @@ import pandas as pd
 from support_module import rho2labels
 import matplotlib.pyplot as plt
 
+
 def goodness_descriptor(test_y, hat_y):
     mse = mean_squared_error(test_y, hat_y)
     rho = np.corrcoef(test_y, hat_y)[0, 1]
@@ -160,7 +161,7 @@ def test_model_with_output(test_x, test_y, model, test_index, path, data_name, m
     print(rows)
     for i in range(0, rows):
         mse, rho, max_test, max_hat, delta_max_val, delta_max_loc = goodness_descriptor(test_y[i, :], y_hat[i, :])
-        goodness_descriptors.append([int(test_index[i]), mse, rho, max_test, max_hat, delta_max_val, delta_max_loc])
+        goodness_descriptors.append([mse, rho, max_test, max_hat, delta_max_val, delta_max_loc])
 
         #print("Testing for datapoint", test_index.loc[i])
         #y_ampl = np.abs(np.max(test_y[i, :]) - np.min(test_y[i, :]))
@@ -177,7 +178,7 @@ def test_model_with_output(test_x, test_y, model, test_index, path, data_name, m
         #plt.title("residuals for a small set")
         #plt.show()
     goodness_descriptors = np.array(goodness_descriptors)
-    columns = ['index', 'mse', 'rho', 'max_test', 'max_hat', 'delta_max_val', 'delta_max_loc']
+    columns = ['mse', 'rho', 'max_test', 'max_hat', 'delta_max_val', 'delta_max_loc']
     print(columns)
     print("Average values are: ", np.average(goodness_descriptors, axis=0))
 
@@ -200,7 +201,11 @@ def test_model_with_output(test_x, test_y, model, test_index, path, data_name, m
 
 
 
-    color_list = np.array([[255,255,178], [254,217,118], [254,178,76], [253,141,60], [252,78,42], [227,26,28], [177,0,38]]) / 255
+    #color_list = np.array([[255,255,178], [254,217,118], [254,178,76], [253,141,60], [252,78,42], [227,26,28], [177,0,38]]) / 255
+    color_list = np.array(
+        [[228,26,28], [55,126,184], [77,175,74], [152,78,163], [255,127,0], [255,255,51],
+         [166,86,40]]) / 255
+
     fig, ax = plt.subplots()
     plt.axis('off')
     ax1 = fig.add_subplot(1, 2, 1)
@@ -240,4 +245,5 @@ def test_model_with_output(test_x, test_y, model, test_index, path, data_name, m
     goodness_file_name = path + 'validation_of_' + model_name + '_on' + data_name + '.csv'
     goodness_descriptors.to_csv(goodness_file_name, index=False)
     print("LSTM model has been tested! ")
-    return  goodness_descriptors
+    return goodness_descriptors, y_hat
+

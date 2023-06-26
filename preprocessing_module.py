@@ -135,3 +135,24 @@ def element_wise_lin_div(data_1, data_2):
     data_t = pd.DataFrame(data_t, columns=columns)
 
     return data_t
+
+
+def value_range_filter(data_1, data_2, lim_val):
+    selected_rows = data_1.loc[data_1[data_1 >= lim_val].any(axis=1)].index.tolist()
+    data_1 = data_1.drop(data_1.index[selected_rows])
+    data_2 = data_2.drop(data_2.index[selected_rows])
+
+    return data_1, data_2
+
+
+def cut_tail(data, length):
+    data_trunc = data.iloc[:, 0:length]
+    return data_trunc
+
+
+def add_noise(data):
+    n, m = data.shape
+    for i in range(0, n):
+        data.loc[i, :] = data.loc[i, :] + np.random.normal(0, 0.01, m)
+
+    return data
